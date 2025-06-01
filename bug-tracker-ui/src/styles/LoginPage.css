@@ -1,0 +1,32 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+.login-card {
+  background-color: #ccc;
+  padding: 3rem 2rem;
+  border-radius: 8px;
+  width: 480px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.login-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.login-button {
+  background-color: #000000;
+  margin-top: 2rem;
+}
+
+.signup-link-button {
+  background-color: #000000;
+  margin-top: 1rem;
+}
