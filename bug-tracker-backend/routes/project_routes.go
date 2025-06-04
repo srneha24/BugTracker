@@ -4,9 +4,11 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/controllers"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/middlewares"
 )
 
 func ProjectRoutes(router *gin.RouterGroup) {
+	router.Use(middlewares.RequireAuth)
 	router.POST("project", controllers.CreateProject)
 	router.GET("project", controllers.GetAllProjects)
 	router.GET("project/:projectID", controllers.GetProjectByID)
@@ -15,6 +17,7 @@ func ProjectRoutes(router *gin.RouterGroup) {
 }
 
 func TeamRoutes(router *gin.RouterGroup) {
+	router.Use(middlewares.RequireAuth)
 	projectGroup := router.Group("project/:projectID/")
 
 	projectGroup.POST("team/add", controllers.AddToTeam)
@@ -23,6 +26,7 @@ func TeamRoutes(router *gin.RouterGroup) {
 }
 
 func BugRoutes(router *gin.RouterGroup) {
+	router.Use(middlewares.RequireAuth)
 	projectGroup := router.Group("project/:projectID/")
 
 	projectGroup.POST("bug", controllers.CreateBug)

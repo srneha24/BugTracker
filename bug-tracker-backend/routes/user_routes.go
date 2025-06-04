@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/controllers"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/middlewares"
 )
 
 func AuthRoutes(router *gin.RouterGroup) {
@@ -12,6 +13,7 @@ func AuthRoutes(router *gin.RouterGroup) {
 }
 
 func UserRoutes(router *gin.RouterGroup) {
+	router.Use(middlewares.RequireAuth)
 	router.GET("user", controllers.GetUserProfile)
 	router.PATCH("user", controllers.UpdateUserProfile)
 	router.DELETE("user", controllers.DeleteUserProfile)

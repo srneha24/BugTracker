@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/api"
@@ -41,7 +41,7 @@ func createNewUser(newUser models.User) (*models.User, error) {
 		return nil, result.Error
 	}
 
-	createdUser, err := utils.LookupUser(newUser.Email)
+	createdUser, err := utils.LookupUserUsingEmail(newUser.Email)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +106,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	existingUser, _ := utils.LookupUser(user.Email)
+	existingUser, _ := utils.LookupUserUsingEmail(user.Email)
 	if existingUser == nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "User not found"})
 		return
