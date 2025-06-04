@@ -4,15 +4,19 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
+	"strconv"
 	s "strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/api"
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/conf"
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/models"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/utils"
 )
 
 func generateRandomString() string {
@@ -37,12 +41,12 @@ func createNewUser(newUser models.User) (*models.User, error) {
 		return nil, result.Error
 	}
 
-	var createdUser models.User
-	if err := conf.DB.First(&createdUser, "email = ?", newUser.Email).Error; err != nil {
+	createdUser, err := utils.LookupUser(newUser.Email)
+	if err != nil {
 		return nil, err
 	}
 
-	return &createdUser, nil
+	return createdUser, nil
 }
 
 func SignUp(c *gin.Context) {
@@ -95,4 +99,41 @@ func SignUp(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
+	var user api.LoginUser
+	if err := c.ShouldBindJSON(&user); err != nil {
+		ec := conf.EnhancedContext{Context: c}
+		ec.ValidationError(err.Error())
+		return
+	}
+
+	existingUser, _ := utils.LookupUser(user.Email)
+	if existingUser == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "User not found"})
+		return
+	}
+
+	err := bcrypt.CompareHashAndPassword([]byte(existingUser.Password), []byte(user.Password))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid password"})
+		return
+	}
+
+	expiresInStr := os.Getenv("JWT_EXPIRES_IN")
+	expiresIn, _ := strconv.Atoi(expiresInStr)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub": existingUser.ID,
+		"exp": time.Now().Add(time.Second * time.Duration(expiresIn)).Unix(),
+	})
+
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	if err != nil {
+		log.Println("Failed to sign token:", err)
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Failed to generate token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"type":  "Bearer",
+		"token": tokenString,
+	})
 }

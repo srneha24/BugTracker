@@ -7,6 +7,11 @@ type SignUpUser struct {
 	Password string `json:"password" binding:"required,min=8"`
 }
 
+type LoginUser struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
+}
+
 type UserResponse struct {
 	ID        uint   `json:"id"`
 	Name      string `json:"name"`
