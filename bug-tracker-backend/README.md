@@ -2,9 +2,30 @@
 
 Instructions on how to manage the backend of the project is explained below. The instructions presume that you are already in the _bug-tracker-backend_ folder when you're running commands. So, before doing anything, naviagate to that folder by running `cd bug-tracker-backend` on your terminal.
 
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Tools And Technologies](#tools-and-technologies)
+- [Setting Up The Project](#setting-up-the-project)
+    - [Creating .env](#creating-env)
+    - [Creating The Database](#creating-the-database)
+- [Database](#database)
+    - [Creating The Tables](#creating-the-tables)
+- [Running The Server](#running-the-server)
+    - [Using Go](#using-go)
+    - [Using Compile Daemon](#using-compile-daemon)
+
 ## Prerequisites
 - Go >= 1.24.3
 - Postgres >= 16.0
+
+## Tools And Technologies
+
+- **Programming Language:** Go
+- **Backend Framework:** Gin
+- **ORM:** GORM
+- **SQL Database:** Postgres
+- **NoSQL Database:** Elascticsearch
 
 ## Setting Up The Project
 
@@ -40,10 +61,28 @@ go run migrations/migrate.go
 
 ## Running The Server
 
+### Using Go
+
 Run the following command on your terminal
 
 ```bash
-go run cmd/main.go
+go run main.go
 ```
 
 To stop the server, press `Ctrl+C`.
+
+### Using Compile Daemon
+
+1. Install Compile Daemon by running the following command on your terminal -
+
+    ```bash
+    go install github.com/githubnemo/CompileDaemon@latest
+    ```
+
+2. Run the project using the following command
+
+    ```bash
+    CompileDaemon --command="./bug-tracker-backend"
+    ```
+
+    To stop the server, press `Ctrl+C`.
