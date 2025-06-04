@@ -52,11 +52,19 @@ func (ec *EnhancedContext) StandardJSON(statusCode int, message string, data int
 	ec.Context.JSON(statusCode, response)
 }
 
-func (ec *EnhancedContext) Success(message string, data interface{}) {
+func (ec *EnhancedContext) Success(data interface{}) {
+	ec.StandardJSON(http.StatusOK, "Request Successful", data)
+}
+
+func (ec *EnhancedContext) SuccessWithMessage(message string, data interface{}) {
 	ec.StandardJSON(http.StatusOK, message, data)
 }
 
-func (ec *EnhancedContext) BadRequest(message string, data interface{}) {
+func (ec *EnhancedContext) BadRequest(data interface{}) {
+	ec.StandardJSON(http.StatusBadRequest, "Request Failed", data)
+}
+
+func (ec *EnhancedContext) BadRequestWithMessage(message string, data interface{}) {
 	ec.StandardJSON(http.StatusBadRequest, message, data)
 }
 

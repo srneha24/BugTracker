@@ -2,6 +2,8 @@
 
 Instructions on how to manage the backend of the project is explained below. The instructions presume that you are already in the _bug-tracker-backend_ folder when you're running commands. So, before doing anything, naviagate to that folder by running `cd bug-tracker-backend` on your terminal.
 
+[Apidog Documentation](https://build-together.apidog.io)
+
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
@@ -101,7 +103,22 @@ To stop the server, press `Ctrl+C`.
 
 ### Creating Files
 
+This project follows _MVC_ structure for organisation. Therefore, depending on the context of the code, they should be written in the appropriate module.
+
+- **Routes:** Contains all the API routes/paths.
+- **Controllers:** Contains all the API contollers, that is, the handler functions.
+- **Models:** Contains the database models.
+- **Migrations:** Contains the database migration files.
+- **Middlewares:** Contains the system middlewares.
+- **API:** Contains the API request and response schemas.
+- **Conf:** Contains the system configurations.
+- **Utils:** Contains the system utility functions.
+
 ### Handling Responses
+
+The [response middlewares](middlewares/response_middleware.go) are responsible for setting a global standard response object for every API on the system. They wrap regular `json` responses with the global standard structure.
+
+The following example illustrates how it can be ensured that the response object is properly set -
 
 ```go
 // Handler that uses regular gin context (will be wrapped by middleware)
@@ -113,6 +130,7 @@ func regularHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, data)
 }
 ```
+The [response.go](conf/response.go) file contains five standard response methods _(Success, SuccessWithMessage, BadRequest, BadRequestWithMessage, ValidationError)_, in case the developer wishes to not state the response status code every time they write a response. They can be used to as follows -
 
 ```go
 // Handler that uses enhanced context (bypasses middleware wrapping)
@@ -124,6 +142,8 @@ func enhancedHandler(c *gin.Context) {
 		"name": "Jane Doe",
 	}
 	
-	ec.Success("User retrieved successfully", data)
+	ec.SuccessWithMessage("User retrieved successfully", data)
 }
 ```
+
+It is suggested to use the `ValidationError` function to create the response object in case of validation errors for `POST` and `PATCH` requests.
