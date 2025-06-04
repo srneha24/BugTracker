@@ -1,0 +1,22 @@
+# IDE
+.vscode
+
+# ENVIRONMENT
+.env
+
+# OUTPUT OF BUILD
+/bin/
+/build/
+/dist/
+
+# OS FILES
+.DS_Store
+
+# BINARIES
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
