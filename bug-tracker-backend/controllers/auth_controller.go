@@ -122,7 +122,7 @@ func Login(c *gin.Context) {
 	expiresIn, _ := strconv.Atoi(expiresInStr)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": existingUser.ID,
-		"exp": time.Now().Add(time.Second * time.Duration(expiresIn)).Unix(),
+		"exp": time.Now().Add(time.Duration(expiresIn) * time.Minute).Unix(),
 	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
