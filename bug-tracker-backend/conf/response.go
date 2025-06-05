@@ -60,12 +60,28 @@ func (ec *EnhancedContext) SuccessWithMessage(message string, data interface{}) 
 	ec.StandardJSON(http.StatusOK, message, data)
 }
 
+func (ec *EnhancedContext) SuccessWithMessageAndNoData(message string) {
+	ec.StandardJSON(http.StatusOK, message, nil)
+}
+
+func (ec *EnhancedContext) SuccessWithNoMessageAndNoData() {
+	ec.StandardJSON(http.StatusOK, "Request Success", nil)
+}
+
 func (ec *EnhancedContext) BadRequest(data interface{}) {
 	ec.StandardJSON(http.StatusBadRequest, "Request Failed", data)
 }
 
 func (ec *EnhancedContext) BadRequestWithMessage(message string, data interface{}) {
 	ec.StandardJSON(http.StatusBadRequest, message, data)
+}
+
+func (ec *EnhancedContext) BadRequestWithMessageAndNoData(message string) {
+	ec.StandardJSON(http.StatusBadRequest, message, nil)
+}
+
+func (ec *EnhancedContext) BadRequestWithNoMessageAndNoData() {
+	ec.StandardJSON(http.StatusBadRequest, "Request Failed", nil)
 }
 
 type validationError struct {

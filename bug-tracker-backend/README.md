@@ -130,7 +130,7 @@ func regularHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, data)
 }
 ```
-The [response.go](conf/response.go) file contains five standard response methods _(Success, SuccessWithMessage, BadRequest, BadRequestWithMessage, ValidationError)_, in case the developer wishes to not state the response status code every time they write a response. They can be used to as follows -
+The [response.go](conf/response.go) file contains some standard response methods, such as `Success`, `BadRequest`, `ValidationError` and so on, in case the developer wishes to not state the response status code every time they write a response. They can be used to as follows -
 
 ```go
 // Handler that uses enhanced context (bypasses middleware wrapping)
@@ -147,3 +147,23 @@ func enhancedHandler(c *gin.Context) {
 ```
 
 It is suggested to use the `ValidationError` function to create the response object in case of validation errors for `POST` and `PATCH` requests.
+
+In case you wish to use both standard and enchanced context responses, make sure you use a `return` statement every time you use an enchanced context response. Such use case can be as follows -
+
+```go
+func standardAndenchancedHandler(c *gin.Context) {
+    ec := GetEnhancedContext(c)
+
+    var body struct {
+        Name string
+        Email string
+    }
+
+    if err := c.ShouldBindJSON(&body); err != nil {
+		ec.ValidationError(err.Error())
+		return
+	}
+
+    c.JSON(http.StatusOK, body)
+}
+```

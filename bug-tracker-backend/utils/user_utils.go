@@ -1,17 +1,11 @@
 package utils
 
 import (
+	"github.com/gin-gonic/gin"
+
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/conf"
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/models"
 )
-
-func LookupUserUsingEmail(email string) (*models.User, error) {
-	var user models.User
-	if err := conf.DB.First(&user, "email = ?", email).Error; err != nil {
-		return nil, err
-	}
-	return &user, nil
-}
 
 func LookupUserUsingID(id int) (*models.User, error) {
 	var user models.User
@@ -19,4 +13,11 @@ func LookupUserUsingID(id int) (*models.User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func ExtractUserFromContext(c *gin.Context) models.User {
+	contextUser, _ := c.Get("user")
+	user, _ := contextUser.(models.User)
+
+	return user
 }

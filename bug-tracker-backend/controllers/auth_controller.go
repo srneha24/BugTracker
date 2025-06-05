@@ -16,7 +16,6 @@ import (
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/api"
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/conf"
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/models"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/utils"
 )
 
 func generateRandomString() string {
@@ -41,12 +40,7 @@ func createNewUser(newUser models.User) (*models.User, error) {
 		return nil, result.Error
 	}
 
-	createdUser, err := utils.LookupUserUsingEmail(newUser.Email)
-	if err != nil {
-		return nil, err
-	}
-
-	return createdUser, nil
+	return &newUser, nil
 }
 
 func SignUp(c *gin.Context) {
@@ -81,7 +75,7 @@ func SignUp(c *gin.Context) {
 		if s.Contains(dbErr.Error(), "uni_users_email") {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "Email already exists"})
 		} else {
-			log.Println(dbErr.Error())
+			log.Println("Error while creating user", dbErr.Error())
 			c.JSON(http.StatusBadRequest, gin.H{"message": "Failed to create user"})
 		}
 		return
@@ -92,8 +86,8 @@ func SignUp(c *gin.Context) {
 		Name:      createdUser.Name,
 		Username:  createdUser.Username,
 		Email:     createdUser.Email,
-		CreatedAt: createdUser.CreatedAt.Format("2006-01-02 15:04:05+0000"),
-		UpdatedAt: createdUser.UpdatedAt.Format("2006-01-02 15:04:05+0000"),
+		CreatedAt: createdUser.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: createdUser.UpdatedAt.Format(time.RFC3339),
 	})
 
 }
@@ -106,7 +100,8 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	existingUser, _ := utils.LookupUserUsingEmail(user.Email)
+	var existingUser *models.User
+	conf.DB.First(&existingUser, "email = ?", user.Email)
 	if existingUser == nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "User not found"})
 		return
