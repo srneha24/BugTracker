@@ -3,7 +3,6 @@ package controllers
 import (
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -67,13 +66,16 @@ func CreateProject(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, api.ProjectResponse{
-		ID:          int(newProject.ID),
-		Title:       newProject.Title,
-		Description: newProject.Description,
-		CreatedBy:   int(newProject.CreatedBy),
-		CreatedAt:   newProject.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:   newProject.UpdatedAt.Format(time.RFC3339),
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Project created successfully",
+		"data": api.ProjectResponse{
+			ID:          int(newProject.ID),
+			Title:       newProject.Title,
+			Description: newProject.Description,
+			CreatedBy:   int(newProject.CreatedBy),
+			CreatedAt:   newProject.CreatedAt,
+			UpdatedAt:   newProject.UpdatedAt,
+		},
 	})
 }
 

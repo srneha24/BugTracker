@@ -14,6 +14,7 @@ import (
 )
 
 func RequireAuth(c *gin.Context) {
+	// Extract the token from the Authorization header
 	tokenString := strings.Split(c.GetHeader("Authorization"), " ")[1]
 
 	if tokenString == "" {
@@ -22,7 +23,8 @@ func RequireAuth(c *gin.Context) {
 		return
 	}
 
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	// Validate the token using the JWT secret
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	}, jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}))
 	if err != nil {
@@ -47,15 +49,17 @@ func RequireAuth(c *gin.Context) {
 			return
 		}
 
-		user, _ := utils.LookupUserUsingID(int(subFloat))
+		user, _ := utils.LookupUserUsingID(uint(subFloat))
 		if user == nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"message": "User not found"})
 			c.Abort()
 			return
 		}
 
+		// Set the user in the context for further use
 		c.Set("user", *user)
 
+		// Proceed with the request
 		c.Next()
 
 	} else {

@@ -20,6 +20,7 @@ Instructions on how to manage the backend of the project is explained below. The
     - [Naming Conventions](#naming-conventions)
     - [Creating Files](#creating-files)
     - [Handling Responses](#handling-responses)
+    - [Extracting Authenticated User From The Request](#extracting-authenticated-user-from-the-request)
 
 ## Prerequisites
 - Go >= 1.24.3
@@ -123,7 +124,7 @@ The following example illustrates how it can be ensured that the response object
 ```go
 // Handler that uses regular gin context (will be wrapped by middleware)
 func regularHandler(c *gin.Context) {
-	data := map[string]interface{}{
+	data := map[string]any{
 		"id":   "123",
 		"name": "John Doe",
 	}
@@ -137,7 +138,7 @@ The [response.go](conf/response.go) file contains some standard response methods
 func enhancedHandler(c *gin.Context) {
 	ec := GetEnhancedContext(c)
 	
-	data := map[string]interface{}{
+	data := map[string]any{
 		"id":   "456",
 		"name": "Jane Doe",
 	}
@@ -167,3 +168,6 @@ func standardAndenchancedHandler(c *gin.Context) {
     c.JSON(http.StatusOK, body)
 }
 ```
+
+### Extracting Authenticated User From The Request
+Use the `ExtractUserFromContext` function to get the user object for authenticated APIs. You can import the function by importing the `utils` module - `"github.com/WNBARookie/BugTracker/bug-tracker-backend/utils"`.

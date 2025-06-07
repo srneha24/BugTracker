@@ -30,7 +30,8 @@ type Bug struct {
 	Description  string         `json:"description"`
 	Tags         pq.StringArray `json:"tags" gorm:"type:varchar[]"`
 	Deadline     time.Time      `json:"deadline" gorm:"not null"`
-	Priority     uint           `json:"priority" gorm:"not null"` // 1: High, 2: Medium, 3: Low
+	Status       string         `json:"status" gorm:"not null;default:'todo'"` // todo, in_progress, done
+	Priority     uint           `json:"priority" gorm:"not null"`              // 1: High, 2: Medium, 3: Low
 	AssignedTo   uint           `json:"assigned_to" gorm:"not null"`
 	AssignedUser User           `json:"-" gorm:"foreignKey:AssignedTo;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"` // User to whom the bug is assigned
 	ProjectID    uint           `json:"project_id" gorm:"not null"`
