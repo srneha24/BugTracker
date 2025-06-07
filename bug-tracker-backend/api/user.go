@@ -22,3 +22,18 @@ type UserResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type UserBugsProject struct {
+	ID           uint   `json:"id"`
+	ProjectTitle string `json:"title"`
+}
+
+type UserBugsResponse struct {
+	ID        uint            `json:"id"`
+	Title     string          `json:"title"`
+	Status    BugStatus       `json:"status"`
+	Priority  Priority        `json:"priority"`
+	CreatedAt time.Time       `json:"created_at"`
+	UpdatedAt time.Time       `json:"updated_at"`
+	Project   UserBugsProject `json:"project" gorm:"-"`
+}

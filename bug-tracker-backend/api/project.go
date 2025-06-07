@@ -28,9 +28,9 @@ type ProjectListQueryParams struct {
 type TeamRole string
 
 const (
-	Admin     TeamRole = "admin"
-	Developer TeamRole = "dev"
-	Tester    TeamRole = "tester"
+	TeamRoleAdmin     TeamRole = "admin"
+	TeamRoleDeveloper TeamRole = "dev"
+	TeamRoleTester    TeamRole = "tester"
 )
 
 func (t TeamRole) Value() string {
@@ -40,9 +40,9 @@ func (t TeamRole) Value() string {
 type Priority uint
 
 const (
-	High Priority = iota + 1
-	Medium
-	Low
+	PriorityHigh Priority = iota + 1
+	PriorityMedium
+	PriorityLow
 )
 
 func (p Priority) Value() uint {
@@ -52,9 +52,9 @@ func (p Priority) Value() uint {
 type BugStatus string
 
 const (
-	Todo       BugStatus = "tod"
-	InProgress BugStatus = "in_progress"
-	Done       BugStatus = "done"
+	BugStatusTodo       BugStatus = "todo"
+	BugStatusInProgress BugStatus = "in_progress"
+	BugStatusDone       BugStatus = "done"
 )
 
 func (s BugStatus) Value() string {
@@ -71,14 +71,18 @@ type CreateBug struct {
 	Tags        []string  `json:"tags" binding:"omitempty"`
 	Deadline    time.Time `json:"deadline" binding:"required"`
 	Status      BugStatus `json:"status" binding:"omitempty,oneof=todo in_progress done"`
-	Priority    Priority  `json:"priority" binding:"required"`
+	Priority    Priority  `json:"priority" binding:"omitempty,oneof=1 2 3"` // 1: High, 2: Medium, 3: Low
 	AssignedTo  uint      `json:"assigned_to" binding:"required"`
 }
 
 // SetDefaults sets default values for CreateBug fields if they are omitted.
 func (c *CreateBug) SetDefaults() {
 	if c.Status == "" {
-		c.Status = Todo
+		c.Status = BugStatusTodo
+	}
+
+	if c.Priority == 0 {
+		c.Priority = PriorityHigh
 	}
 }
 

@@ -48,7 +48,7 @@ func CreateProject(c *gin.Context) {
 	projectTeam := models.Team{
 		ProjectID: newProject.ID,
 		UserID:    user.ID,
-		Role:      api.Admin.Value(),
+		Role:      api.TeamRoleAdmin.Value(),
 	}
 
 	if err := tx.Create(&projectTeam).Error; err != nil {
