@@ -3,6 +3,7 @@ package middlewares
 import (
 	"bytes"
 	"encoding/json"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -21,14 +22,17 @@ func StandardResponseMiddleware(c *gin.Context) {
 	// Process the request
 	c.Next()
 
+	contentType := c.Writer.Header().Get("Content-Type")
+	isJSONResponse := strings.Contains(contentType, "application/json")
+
 	// Get the captured response
 	statusCode := c.Writer.Status()
 	responseBody := w.Body.Bytes()
 
 	// Only wrap if there's actual response content
-	if len(responseBody) > 0 {
+	if len(responseBody) > 0 && isJSONResponse {
 		// Check if response is already in standard format
-		var existingResponse map[string]interface{}
+		var existingResponse map[string]any
 		isStandardFormat := false
 
 		if err := json.Unmarshal(responseBody, &existingResponse); err == nil {
@@ -51,13 +55,20 @@ func StandardResponseMiddleware(c *gin.Context) {
 			// Wrap the response in standard format
 			var wrappedResponse conf.StandardResponse
 			var existingMessage string
+			var existingData any
 
-			// Try to extract existing message if it exists
+			// Try to extract existing message and data if they exist
 			if existingResponse != nil {
 				if msg, ok := existingResponse["message"]; ok {
 					if msgStr, ok := msg.(string); ok {
 						existingMessage = msgStr
 					}
+				}
+
+				if data, ok := existingResponse["data"]; ok {
+					existingData = data
+				} else {
+					existingData = nil // No data field, set to nil
 				}
 			}
 
@@ -78,31 +89,53 @@ func StandardResponseMiddleware(c *gin.Context) {
 			}
 
 			// Set the data
-			if len(responseBody) > 0 {
-				var responseData interface{}
-				if err := json.Unmarshal(responseBody, &responseData); err != nil {
-					// If it's not valid JSON, use as string
-					wrappedResponse.Data = string(responseBody)
-				} else {
-					if existingMessage != "" {
-						// Remove the message from the response data if it exists
-						if dataMap, ok := responseData.(map[string]interface{}); ok {
-							delete(dataMap, "message")
-							// Check if data is empty after removing message
-							if len(dataMap) == 0 {
-								responseData = nil
-							}
+			var responseData any
+			if err := json.Unmarshal(responseBody, &responseData); err != nil {
+				// If it's not valid JSON, use as string
+				wrappedResponse.Data = string(responseBody)
+			} else {
+				if existingMessage != "" {
+					// Remove the message from the response data if it exists
+					if dataMap, ok := responseData.(map[string]any); ok {
+						delete(dataMap, "message")
+						// Check if data is empty after removing message
+						if len(dataMap) == 0 {
+							responseData = nil
 						}
 					}
+				}
+
+				if existingData != nil {
+					// If existing data is present, use it
+					wrappedResponse.Data = existingData
+				} else {
+					// Otherwise, use the unmarshaled response data
 					wrappedResponse.Data = responseData
 				}
-			} else {
-				wrappedResponse.Data = nil
+			}
+
+			// Check if the response body has other fields that need to be preserved
+			var finalResponseData = make(map[string]any)
+			if existingData != nil {
+				for key, value := range existingResponse {
+					if key != "message" && key != "success" && key != "data" {
+						finalResponseData[key] = value
+					}
+				}
 			}
 
 			// Marshal the wrapped response
 			var err error
-			finalResponse, err = json.Marshal(wrappedResponse)
+			if len(finalResponseData) == 0 {
+				finalResponse, err = json.Marshal(wrappedResponse)
+			} else {
+				// Include other fields in the final response
+				finalResponseData["message"] = wrappedResponse.Message
+				finalResponseData["success"] = wrappedResponse.Success
+				finalResponseData["data"] = wrappedResponse.Data
+				finalResponse, err = json.Marshal(finalResponseData)
+			}
+
 			if err != nil {
 				// Fallback to original response if marshaling fails
 				finalResponse = responseBody

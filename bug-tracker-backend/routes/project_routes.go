@@ -11,13 +11,14 @@ func ProjectRoutes(router *gin.RouterGroup) {
 	router.Use(middlewares.RequireAuth)
 	router.POST("project", controllers.CreateProject)
 	router.GET("project", controllers.GetAllProjects)
-	router.GET("project/:projectID", controllers.GetProjectByID)
-	router.PATCH("project/:projectID", controllers.UpdateProject)
-	router.DELETE("project/:projectID", controllers.DeleteProject)
+	router.GET("project/:projectID", middlewares.ProjectCheckMiddleware, controllers.GetProjectByID)
+	router.PATCH("project/:projectID", middlewares.ProjectCheckMiddleware, controllers.UpdateProject)
+	router.DELETE("project/:projectID", middlewares.ProjectCheckMiddleware, controllers.DeleteProject)
 }
 
 func TeamRoutes(router *gin.RouterGroup) {
 	router.Use(middlewares.RequireAuth)
+	router.Use(middlewares.ProjectCheckMiddleware)
 	projectGroup := router.Group("project/:projectID/")
 
 	projectGroup.POST("team/add", controllers.AddToTeam)
@@ -27,11 +28,12 @@ func TeamRoutes(router *gin.RouterGroup) {
 
 func BugRoutes(router *gin.RouterGroup) {
 	router.Use(middlewares.RequireAuth)
+	router.Use(middlewares.ProjectCheckMiddleware)
 	projectGroup := router.Group("project/:projectID/")
 
 	projectGroup.POST("bug", controllers.CreateBug)
 	projectGroup.GET("bug", controllers.GetAllBugs)
-	projectGroup.GET("bug/:bugID", controllers.GetBugByID)
-	projectGroup.PATCH("bug/:bugID", controllers.UpdateBug)
-	projectGroup.DELETE("bug/:bugID", controllers.DeleteBug)
+	projectGroup.GET("bug/:bugID", middlewares.BugCheckMiddleware, controllers.GetBugByID)
+	projectGroup.PATCH("bug/:bugID", middlewares.BugCheckMiddleware, controllers.UpdateBug)
+	projectGroup.DELETE("bug/:bugID", middlewares.BugCheckMiddleware, controllers.DeleteBug)
 }

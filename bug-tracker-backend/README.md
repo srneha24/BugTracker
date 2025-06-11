@@ -1,6 +1,6 @@
 # BUG TRACKER BACKEND
 
-Instructions on how to manage the backend of the project is explained below. The instructions presume that you are already in the _bug-tracker-backend_ folder when you're running commands. So, before doing anything, naviagate to that folder by running `cd bug-tracker-backend` on your terminal.
+Instructions on how to manage the backend of the project are given below. The instructions presume that you are already in the _bug-tracker-backend_ folder when you're running commands. So, before doing anything, naviagate to that folder by running `cd bug-tracker-backend` on your terminal.
 
 [Apidog Documentation](https://build-together.apidog.io)
 
@@ -20,6 +20,7 @@ Instructions on how to manage the backend of the project is explained below. The
     - [Naming Conventions](#naming-conventions)
     - [Creating Files](#creating-files)
     - [Handling Responses](#handling-responses)
+    - [Extracting Objects From The Request Context](#extracting-objects-from-the-request-context)
 
 ## Prerequisites
 - Go >= 1.24.3
@@ -123,21 +124,21 @@ The following example illustrates how it can be ensured that the response object
 ```go
 // Handler that uses regular gin context (will be wrapped by middleware)
 func regularHandler(c *gin.Context) {
-	data := map[string]interface{}{
+	data := map[string]any{
 		"id":   "123",
 		"name": "John Doe",
 	}
 	c.JSON(http.StatusOK, data)
 }
 ```
-The [response.go](conf/response.go) file contains five standard response methods _(Success, SuccessWithMessage, BadRequest, BadRequestWithMessage, ValidationError)_, in case the developer wishes to not state the response status code every time they write a response. They can be used to as follows -
+The [response.go](conf/response.go) file contains some standard response methods, such as `Success`, `BadRequest`, `ValidationError` and so on, in case the developer wishes to not state the response status code every time they write a response. They can be used to as follows -
 
 ```go
 // Handler that uses enhanced context (bypasses middleware wrapping)
 func enhancedHandler(c *gin.Context) {
 	ec := GetEnhancedContext(c)
 	
-	data := map[string]interface{}{
+	data := map[string]any{
 		"id":   "456",
 		"name": "Jane Doe",
 	}
@@ -147,3 +148,29 @@ func enhancedHandler(c *gin.Context) {
 ```
 
 It is suggested to use the `ValidationError` function to create the response object in case of validation errors for `POST` and `PATCH` requests.
+
+In case you wish to use both standard and enchanced context responses, make sure you use a `return` statement every time you use an enchanced context response, if it is not the final response of the function, when the function should be exited. Such use case can be as follows -
+
+```go
+// Handler that uses both standard and enhanced context
+func standardAndenchancedHandler(c *gin.Context) {
+    ec := GetEnhancedContext(c)
+
+    var body struct {
+        Name string
+        Email string
+    }
+
+    if err := c.ShouldBindJSON(&body); err != nil {
+		ec.ValidationError(err.Error())
+		return
+	}
+
+    c.JSON(http.StatusOK, body)
+}
+```
+
+### Extracting Objects From The Request Context
+In case of authenticated APIs, the `User` object is stored in the request context. You can retrieve the object by using the `ExtractUserFromContext` function from the `utils` module.
+
+In case of the project, team and bug endpoints, where the IDs are set as path parameters, the `Project` and `Bug` objects are also stored in the request context. You can retrieve them by using the `ExtractProjectFromContext` and `ExtractBugFromContext` functions, respectively, from the `utils` module.
