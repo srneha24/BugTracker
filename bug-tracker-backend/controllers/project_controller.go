@@ -119,10 +119,41 @@ func GetAllProjects(c *gin.Context) {
 }
 
 func GetProjectByID(c *gin.Context) {
+	ec := conf.EnhancedContext{Context: c}
+	project := utils.ExtractProjectFromContext(c)
+
+	ec.SuccessWithMessage(
+		"Project retrieved successfully",
+		api.ProjectResponse{
+			ID:          int(project.ID),
+			Title:       project.Title,
+			Description: project.Description,
+			CreatedBy:   int(project.CreatedBy),
+			CreatedAt:   project.CreatedAt,
+			UpdatedAt:   project.UpdatedAt,
+		},
+	)
 }
 
 func UpdateProject(c *gin.Context) {
 }
 
 func DeleteProject(c *gin.Context) {
+	ec := conf.EnhancedContext{Context: c}
+	project := utils.ExtractProjectFromContext(c)
+
+	// Check if user is admin of the project
+	contextUserRole, exists := c.Get("userRole")
+	if !exists || contextUserRole != api.TeamRoleAdmin.Value() {
+		c.JSON(http.StatusForbidden, gin.H{"message": "Only project admins can delete the project"})
+		return
+	}
+
+	if err := conf.DB.Delete(&project).Error; err != nil {
+		log.Println("Error while deleting project:", err)
+		ec.BadRequestWithMessageAndNoData("Failed to delete project")
+		return
+	}
+
+	ec.SuccessWithMessageAndNoData("Project deleted successfully")
 }

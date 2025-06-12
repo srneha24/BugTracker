@@ -8,6 +8,7 @@ import (
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/api"
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/conf"
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/models"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/utils"
 )
 
 func ProjectCheckMiddleware(c *gin.Context) {
@@ -25,7 +26,21 @@ func ProjectCheckMiddleware(c *gin.Context) {
 		return
 	}
 
+	// Check if the user is part of the project team
+	user := utils.ExtractUserFromContext(c)
+	role, err := utils.CheckIfUserIsProjectMember(user.ID, project.ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Error checking project membership"})
+		c.Abort()
+		return
+	} else if role == "" {
+		c.JSON(http.StatusForbidden, gin.H{"message": "User is not a member of this project"})
+		c.Abort()
+		return
+	}
+
 	c.Set("project", project)
+	c.Set("userRole", role)
 	c.Next()
 }
 
