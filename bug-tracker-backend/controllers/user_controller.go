@@ -12,6 +12,25 @@ import (
 )
 
 func GetUserProfile(c *gin.Context) {
+
+	ec := conf.EnhancedContext{Context: c}
+
+	user := utils.ExtractUserFromContext(c)
+
+	response := gin.H{
+		"success": true,
+		"message": "User found.",
+		"data": gin.H{
+			"id":         user.ID,
+			"name":       user.Name,
+			"email":      user.Email,
+			"username":   user.Username,
+			"created_at": user.CreatedAt,
+			"updated_at": user.UpdatedAt,
+		},
+	}
+	ec.JSON(200, response)
+
 }
 
 func UpdateUserProfile(c *gin.Context) {
