@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -12,6 +13,23 @@ import (
 )
 
 func GetUserProfile(c *gin.Context) {
+
+	user := utils.ExtractUserFromContext(c)
+
+	response := gin.H{
+		"success": true,
+		"message": "User found.",
+		"data": gin.H{
+			"id":         user.ID,
+			"name":       user.Name,
+			"email":      user.Email,
+			"username":   user.Username,
+			"created_at": user.CreatedAt,
+			"updated_at": user.UpdatedAt,
+		},
+	}
+	c.JSON(http.StatusOK, response)
+
 }
 
 func UpdateUserProfile(c *gin.Context) {
