@@ -5,4 +5,5 @@
 
 /* Where we'll override the tailwind css theme */
 @theme {
+  --color-light-gray: #d9d9d9;
 }
