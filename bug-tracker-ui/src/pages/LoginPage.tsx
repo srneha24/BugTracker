@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../api/axiosInstance';
 import '../styles/CommonStyles.css';
 import '../styles/LoginPage.css';
 
@@ -8,11 +9,31 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ email, password });
-    alert('Login successful!');
-    navigate('/home');
+    try {
+      const response = await axiosInstance.post('/user/login', {
+        email,
+        password,
+      });
+
+      if (response.data.success) {
+        // Save token if backend returns one
+        if (response.data.token) {
+          localStorage.setItem('token', response.data.token);
+        }
+        alert('Login successful!');
+        navigate('/home');
+      } else {
+        alert('Login failed: ' + (response.data.message || 'Unknown error'));
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.message) {
+        alert(`Login failed: ${error.response.data.message}`);
+      } else {
+        alert('Login failed: Unknown error occurred');
+      }
+    }
   };
 
   return (

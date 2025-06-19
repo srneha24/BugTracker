@@ -1,3 +1,4 @@
+import axiosInstance from '../api/axiosInstance';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CommonStyles.css';
@@ -8,17 +9,43 @@ const SignUpPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
     if (password !== confirmPassword) {
-      alert("Passwords don't match!");
+      setError("Passwords don't match!");
       return;
     }
-    console.log({ name, email, password, confirmPassword });
-    alert('Sign up successful!');
-    navigate('/login');
+
+    try {
+      const response = await axiosInstance.post('/user/signup', {
+        name,
+        email,
+        password,
+      });
+
+      if (response.data.success) {
+        // Save token if backend returns one
+        if (response.data.token) {
+          localStorage.setItem('token', response.data.token);
+        }
+        alert('Sign up successful!');
+        // Navigate to home or dashboard directly if token saved
+        navigate('/home');
+      } else {
+        setError(response.data.message || 'Sign up failed');
+      }
+    } catch (err: any) {
+      if (err.response && err.response.data) {
+        setError(err.response.data.message || 'Sign up failed');
+      } else {
+        setError('Network error or server is down');
+      }
+    }
   };
 
   return (
@@ -73,6 +100,8 @@ const SignUpPage = () => {
               className="input-field"
             />
           </div>
+
+          {error && <p style={{ color: 'red' }}>{error}</p>}
 
           <button type="submit" className="button-base signup-button">
             Sign Up
