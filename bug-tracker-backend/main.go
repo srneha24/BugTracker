@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/conf"
 	"github.com/WNBARookie/BugTracker/bug-tracker-backend/middlewares"
@@ -15,6 +16,8 @@ func init() {
 
 func main() {
 	router := gin.Default()
+
+	router.Use(cors.Default())
 
 	// Middlewares
 	router.Use(middlewares.StandardResponseMiddleware)
