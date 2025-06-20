@@ -6,6 +6,7 @@ import '../styles/SignUpPage.css';
 
 const SignUpPage = () => {
   const [name, setName] = useState('');
+  const [username, setUsername] = useState(''); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -24,17 +25,16 @@ const SignUpPage = () => {
     try {
       const response = await axiosInstance.post('/user/signup', {
         name,
+        username,
         email,
         password,
       });
 
       if (response.data.success) {
-        // Save token if backend returns one
         if (response.data.token) {
           localStorage.setItem('token', response.data.token);
         }
         alert('Sign up successful!');
-        // Navigate to home or dashboard directly if token saved
         navigate('/home');
       } else {
         setError(response.data.message || 'Sign up failed');
@@ -61,6 +61,18 @@ const SignUpPage = () => {
               onChange={e => setName(e.target.value)}
               required
               placeholder="Your full name"
+              className="input-field"
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="input-label">Username</label><br />
+            <input
+              type="text"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              required
+              placeholder="Choose a username"
               className="input-field"
             />
           </div>
