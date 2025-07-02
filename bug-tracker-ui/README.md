@@ -38,3 +38,7 @@ Start the application
 The project will spin up and run at http://localhost:5000/. Navigate to this URL in your browser
 
 By default it will take you to the home page
+
+## Environment Variables
+
+Before running the project, create a `.env` file in the root of the frontend project using the `.env.example` as a guide:
