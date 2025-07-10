@@ -1,20 +1,26 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
+import axiosInstance from '../api/axiosInstance';
+import type { Project } from '../types/types';
 
 const ProjectsPage = () => {
-  // TODO: connect to api
-  // const [projects, setProjects] = useState<Project[]>([]);
-
-  const projects = ['Project 1', 'Project 2', 'Project 3', 'Project 4', 'Project 5', 'Project 6'];
+  const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
     const fetchProjects = async () => {
-      const apiUrl = '/api/projects';
       try {
-        const res = await fetch(apiUrl);
-        const data = await res.json();
-        console.log(data);
-        //   setProjects(data);
+        const response = await axiosInstance.get('/project', {
+          params: {
+            search: '',
+            page: 1,
+            limit: 10,
+          },
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+        });
+
+        setProjects(response.data.data);
       } catch (error) {
         console.error('Error fetching data: ', error);
       }
@@ -41,8 +47,8 @@ const ProjectsPage = () => {
       {/* TODO: refactor this to use same project list component that will be used on dashboard */}
       <div className="grid grid-cols-3 gap-10">
         {projects.map((project) => (
-          <div className="bg-light-gray text-center p-20 hover:bg-gray-400">
-            <h1 className="text-2xl font-bold">{project}</h1>
+          <div key={project.id} className="bg-light-gray text-center p-20 hover:bg-gray-400">
+            <h1 className="text-2xl font-bold">{project.title}</h1>
           </div>
         ))}
       </div>
