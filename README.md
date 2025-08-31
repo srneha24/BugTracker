@@ -4,5 +4,5 @@ Full-Stack bug tracker created by members of Rewriting the Code with the intent 
 ## Backend
 [Backend README](bug-tracker-backend/README.md)
 
-## Backend
+## Frontend
 [Frontend README](bug-tracker-ui/README.md)
