@@ -33,6 +33,45 @@ func GetUserProfile(c *gin.Context) {
 }
 
 func UpdateUserProfile(c *gin.Context) {
+	var updatedUser api.UpdateUser
+	ec := conf.EnhancedContext{Context: c}
+	user := utils.ExtractUserFromContext(c)
+
+	if err := c.ShouldBindJSON(&updatedUser); err != nil {
+		ec.ValidationError(err.Error())
+		return
+	}
+
+	updateData := make(map[string]any)
+
+	if updatedUser.Name != nil {
+		updateData["name"] = *updatedUser.Name
+	}
+	if updatedUser.Username != nil {
+		updateData["username"] = *updatedUser.Username
+	}
+	if updatedUser.Password != nil {
+		updateData["password"] = *updatedUser.Password
+	}
+
+	result := conf.DB.Model(&user).Updates(updateData)
+
+	if result.Error != nil {
+		ec.BadRequestWithMessage("Failed to update project: ", result.Error.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User updated successfully",
+		"data": api.UserResponse{
+			ID:        user.ID,
+			Name:      user.Name,
+			Username:  user.Username,
+			Email:     user.Email,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		},
+	})
 }
 
 func DeleteUserProfile(c *gin.Context) {

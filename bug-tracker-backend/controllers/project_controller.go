@@ -136,6 +136,42 @@ func GetProjectByID(c *gin.Context) {
 }
 
 func UpdateProject(c *gin.Context) {
+	var updatedProject api.UpdateProject
+	ec := conf.EnhancedContext{Context: c}
+	project := utils.ExtractProjectFromContext(c)
+
+	if err := c.ShouldBindJSON(&updatedProject); err != nil {
+		ec.ValidationError(err.Error())
+		return
+	}
+
+	updateData := make(map[string]any)
+
+	if updatedProject.Title != nil {
+		updateData["title"] = *updatedProject.Title
+	}
+	if updatedProject.Description != nil {
+		updateData["description"] = *updatedProject.Description
+	}
+
+	result := conf.DB.Model(&project).Updates(updateData)
+
+	if result.Error != nil {
+		ec.BadRequestWithMessage("Failed to update project: ", result.Error.Error())
+		return
+	}
+
+	ec.SuccessWithMessage(
+		"Project updated successfully",
+		api.ProjectResponse{
+			ID:          int(project.ID),
+			Title:       project.Title,
+			Description: project.Description,
+			CreatedBy:   int(project.CreatedBy),
+			CreatedAt:   project.CreatedAt,
+			UpdatedAt:   project.UpdatedAt,
+		},
+	)
 }
 
 func DeleteProject(c *gin.Context) {

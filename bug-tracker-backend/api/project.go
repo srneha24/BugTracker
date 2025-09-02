@@ -109,3 +109,8 @@ type BugResponse struct {
 type BugURI struct {
 	BugID uint `uri:"bugID" binding:"required"`
 }
+
+type UpdateProject struct {
+	Title       *string `json:"title" binding:"omitempty"`
+	Description *string `json:"description" binding:"omitempty"`
+}
