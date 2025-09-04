@@ -37,3 +37,9 @@ type UserBugsResponse struct {
 	UpdatedAt time.Time       `json:"updated_at"`
 	Project   UserBugsProject `json:"project" gorm:"-"`
 }
+
+type UpdateUser struct {
+	Name     *string `json:"name" binding:"omitempty"`
+	Username *string `json:"username,omitempty" binding:"omitempty,alphanum,min=3,max=20"`
+	Password *string `json:"password" binding:"omitempty,min=8"`
+}

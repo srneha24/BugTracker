@@ -19,8 +19,8 @@ const LoginPage = () => {
 
       if (response.data.success) {
         // Save token if backend returns one
-        if (response.data.token) {
-          localStorage.setItem('token', response.data.token);
+        if (response.data.data.token) {
+          localStorage.setItem('token', response.data.data.token);
         }
         alert('Login successful!');
         navigate('/home');
@@ -43,27 +43,15 @@ const LoginPage = () => {
 
         <form onSubmit={handleLogin}>
           <div className="form-group">
-            <label className="input-label">Email</label><br />
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              placeholder="you@example.com"
-              className="input-field"
-            />
+            <label className="input-label">Email</label>
+            <br />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="you@example.com" className="input-field" />
           </div>
 
           <div className="form-group">
-            <label className="input-label">Password</label><br />
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              placeholder="Enter your password"
-              className="input-field"
-            />
+            <label className="input-label">Password</label>
+            <br />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Enter your password" className="input-field" />
           </div>
 
           <button type="submit" className="button-base login-button">

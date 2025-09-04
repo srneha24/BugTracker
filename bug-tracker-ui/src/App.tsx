@@ -23,7 +23,6 @@ function App() {
         <Route path="home" element={<HomePage />} />
         <Route path="homepage" element={<Navigate to="/home" replace />} />
         <Route path="dashboard" element={<Navigate to="/home" replace />} />
-
         <Route path="projects" element={<ProjectsPage />} />
         <Route path="projects/:id" element={<ProjectDetailsPage />} />
         <Route path="login" element={<LoginPage />} />
