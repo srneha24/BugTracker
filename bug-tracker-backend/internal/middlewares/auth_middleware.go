@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/utils"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/utils"
 )
 
 func RequireAuth(c *gin.Context) {

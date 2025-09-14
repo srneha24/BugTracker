@@ -3,7 +3,7 @@ package api
 import (
 	"time"
 
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/utils"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/utils"
 )
 
 type CreateProject struct {

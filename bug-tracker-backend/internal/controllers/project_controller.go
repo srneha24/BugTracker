@@ -6,14 +6,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/api"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/conf"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/models"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/utils"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/conf"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/models"
+	types "github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/types"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/utils"
 )
 
 func CreateProject(c *gin.Context) {
-	var project api.CreateProject
+	var project types.CreateProject
 	ec := conf.EnhancedContext{Context: c}
 
 	if err := c.ShouldBindJSON(&project); err != nil {
@@ -48,7 +48,7 @@ func CreateProject(c *gin.Context) {
 	projectTeam := models.Team{
 		ProjectID: newProject.ID,
 		UserID:    user.ID,
-		Role:      api.TeamRoleAdmin.Value(),
+		Role:      types.TeamRoleAdmin.Value(),
 	}
 
 	if err := tx.Create(&projectTeam).Error; err != nil {
@@ -68,7 +68,7 @@ func CreateProject(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Project created successfully",
-		"data": api.ProjectResponse{
+		"data": types.ProjectResponse{
 			ID:          int(newProject.ID),
 			Title:       newProject.Title,
 			Description: newProject.Description,
@@ -80,8 +80,8 @@ func CreateProject(c *gin.Context) {
 }
 
 func GetAllProjects(c *gin.Context) {
-	var params api.ProjectListQueryParams
-	var data []api.ProjectResponse
+	var params types.ProjectListQueryParams
+	var data []types.ProjectResponse
 	ec := conf.EnhancedContext{Context: c}
 
 	if err := c.ShouldBindQuery(&params); err != nil {
@@ -124,7 +124,7 @@ func GetProjectByID(c *gin.Context) {
 
 	ec.SuccessWithMessage(
 		"Project retrieved successfully",
-		api.ProjectResponse{
+		types.ProjectResponse{
 			ID:          int(project.ID),
 			Title:       project.Title,
 			Description: project.Description,
@@ -136,7 +136,7 @@ func GetProjectByID(c *gin.Context) {
 }
 
 func UpdateProject(c *gin.Context) {
-	var updatedProject api.UpdateProject
+	var updatedProject types.UpdateProject
 	ec := conf.EnhancedContext{Context: c}
 	project := utils.ExtractProjectFromContext(c)
 
@@ -163,7 +163,7 @@ func UpdateProject(c *gin.Context) {
 
 	ec.SuccessWithMessage(
 		"Project updated successfully",
-		api.ProjectResponse{
+		types.ProjectResponse{
 			ID:          int(project.ID),
 			Title:       project.Title,
 			Description: project.Description,
@@ -180,7 +180,7 @@ func DeleteProject(c *gin.Context) {
 
 	// Check if user is admin of the project
 	contextUserRole, exists := c.Get("userRole")
-	if !exists || contextUserRole != api.TeamRoleAdmin.Value() {
+	if !exists || contextUserRole != types.TeamRoleAdmin.Value() {
 		c.JSON(http.StatusForbidden, gin.H{"message": "Only project admins can delete the project"})
 		return
 	}

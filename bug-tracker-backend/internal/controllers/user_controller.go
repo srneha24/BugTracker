@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/api"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/conf"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/utils"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/conf"
+	types "github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/types"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/utils"
 )
 
 func GetUserProfile(c *gin.Context) {
@@ -33,7 +33,7 @@ func GetUserProfile(c *gin.Context) {
 }
 
 func UpdateUserProfile(c *gin.Context) {
-	var updatedUser api.UpdateUser
+	var updatedUser types.UpdateUser
 	ec := conf.EnhancedContext{Context: c}
 	user := utils.ExtractUserFromContext(c)
 
@@ -63,7 +63,7 @@ func UpdateUserProfile(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User updated successfully",
-		"data": api.UserResponse{
+		"data": types.UserResponse{
 			ID:        user.ID,
 			Name:      user.Name,
 			Username:  user.Username,
@@ -89,7 +89,7 @@ func GetUserBugs(c *gin.Context) {
 		ProjectTitle string    `json:"project_title"`
 	}
 
-	var userBugs []api.UserBugsResponse
+	var userBugs []types.UserBugsResponse
 	var rawResults []bugResult
 	ec := conf.EnhancedContext{Context: c}
 
@@ -118,14 +118,14 @@ func GetUserBugs(c *gin.Context) {
 	}
 
 	for _, result := range rawResults {
-		userBugs = append(userBugs, api.UserBugsResponse{
+		userBugs = append(userBugs, types.UserBugsResponse{
 			ID:        result.ID,
 			Title:     result.Title,
-			Status:    api.BugStatus(result.Status),
-			Priority:  api.Priority(result.Priority),
+			Status:    types.BugStatus(result.Status),
+			Priority:  types.Priority(result.Priority),
 			CreatedAt: result.CreatedAt,
 			UpdatedAt: result.UpdatedAt,
-			Project: api.UserBugsProject{
+			Project: types.UserBugsProject{
 				ID:           result.ProjectID,
 				ProjectTitle: result.ProjectTitle,
 			},

@@ -73,7 +73,7 @@ go run migrations/migrate.go
 Run the following command on your terminal
 
 ```bash
-go run main.go
+go run server/main.go
 ```
 
 To stop the server, press `Ctrl+C`.
@@ -89,7 +89,7 @@ To stop the server, press `Ctrl+C`.
 2. Run the project using the following command
 
     ```bash
-    CompileDaemon --command="./bug-tracker-backend"
+    CompileDaemon -exclude-dir=api -build="go build -o bug-tracker-backend ./server" -command="./bug-tracker-backend"
     ```
 
     To stop the server, press `Ctrl+C`.
@@ -111,13 +111,13 @@ This project follows _MVC_ structure for organisation. Therefore, depending on t
 - **Models:** Contains the database models.
 - **Migrations:** Contains the database migration files.
 - **Middlewares:** Contains the system middlewares.
-- **API:** Contains the API request and response schemas.
+- **Types:** Contains the API request and response schemas.
 - **Conf:** Contains the system configurations.
 - **Utils:** Contains the system utility functions.
 
 ### Handling Responses
 
-The [response middlewares](middlewares/response_middleware.go) are responsible for setting a global standard response object for every API on the system. They wrap regular `json` responses with the global standard structure.
+The [response middlewares](internal/middlewares/response_middleware.go) are responsible for setting a global standard response object for every API on the system. They wrap regular `json` responses with the global standard structure.
 
 The following example illustrates how it can be ensured that the response object is properly set -
 
