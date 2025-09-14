@@ -18,8 +18,8 @@ func ProjectRoutes(router *gin.RouterGroup) {
 
 func TeamRoutes(router *gin.RouterGroup) {
 	router.Use(middlewares.RequireAuth)
-	router.Use(middlewares.ProjectCheckMiddleware)
 	projectGroup := router.Group("project/:projectID/")
+	projectGroup.Use(middlewares.ProjectCheckMiddleware)
 
 	projectGroup.POST("team/add", controllers.AddToTeam)
 	projectGroup.GET("team", controllers.GetTeamMembers)
@@ -28,8 +28,8 @@ func TeamRoutes(router *gin.RouterGroup) {
 
 func BugRoutes(router *gin.RouterGroup) {
 	router.Use(middlewares.RequireAuth)
-	router.Use(middlewares.ProjectCheckMiddleware)
 	projectGroup := router.Group("project/:projectID/")
+	projectGroup.Use(middlewares.ProjectCheckMiddleware)
 
 	projectGroup.POST("bug", controllers.CreateBug)
 	projectGroup.GET("bug", controllers.GetAllBugs)

@@ -1,4 +1,4 @@
-package api
+package types
 
 import (
 	"time"
@@ -113,4 +113,14 @@ type BugURI struct {
 type UpdateProject struct {
 	Title       *string `json:"title" binding:"omitempty"`
 	Description *string `json:"description" binding:"omitempty"`
+}
+
+type BugListQueryParams struct {
+	*utils.PaginationQueryParams
+	Search     *string `form:"search"`
+	Tags       *string `form:"tags"`
+	Deadline   *string `form:"deadline"`
+	Status     *string `form:"status" binding:"omitempty,oneof=todo in_progress done"`
+	Priority   *int    `form:"priority" binding:"omitempty,oneof=1 2 3"`
+	AssignedTo *uint   `form:"assigned_to"`
 }

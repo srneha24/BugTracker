@@ -24,7 +24,7 @@ func init() {
 
 	// CORS
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"}, // ⚠️ update with your frontend domain
+		AllowOrigins:     []string{"*"}, // TODO: update with your frontend domain
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
