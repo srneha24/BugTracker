@@ -1,25 +1,30 @@
 package main
 
 import (
+	"net/http"
 	"time"
-	"github.com/gin-gonic/gin"
-	"github.com/gin-contrib/cors"
 
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/conf"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/middlewares"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/routes"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/conf"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/middlewares"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/routes"
 )
 
+// Create a single shared Gin router instance
+var router *gin.Engine
+
 func init() {
+	// Load env vars & DB connection (runs once on cold start)
 	conf.LoadEnvVars()
 	conf.ConnectToDatabase()
-}
 
-func main() {
-	router := gin.Default()
+	router = gin.New()
 
+	// CORS
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5000"},
+		AllowOrigins:     []string{"*"}, // TODO: update with your frontend domain
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -40,6 +45,9 @@ func main() {
 		routes.TeamRoutes(apiV1)
 		routes.BugRoutes(apiV1)
 	}
+}
 
-	router.Run(":8080")
+// Vercel entrypoint
+func Handler(w http.ResponseWriter, r *http.Request) {
+	router.ServeHTTP(w, r)
 }

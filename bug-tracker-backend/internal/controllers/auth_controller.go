@@ -13,9 +13,9 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/api"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/conf"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/models"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/conf"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/models"
+	types "github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/types"
 )
 
 func generateRandomString() string {
@@ -44,7 +44,7 @@ func createNewUser(newUser models.User) (*models.User, error) {
 }
 
 func SignUp(c *gin.Context) {
-	var user api.SignUpUser
+	var user types.SignUpUser
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		ec := conf.EnhancedContext{Context: c}
@@ -83,7 +83,7 @@ func SignUp(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "User created successfully",
-		"data": api.UserResponse{
+		"data": types.UserResponse{
 			ID:        createdUser.ID,
 			Name:      createdUser.Name,
 			Username:  createdUser.Username,
@@ -96,7 +96,7 @@ func SignUp(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	var user api.LoginUser
+	var user types.LoginUser
 	if err := c.ShouldBindJSON(&user); err != nil {
 		ec := conf.EnhancedContext{Context: c}
 		ec.ValidationError(err.Error())
