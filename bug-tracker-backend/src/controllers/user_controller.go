@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/conf"
-	types "github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/types"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/utils"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/src/conf"
+	types "github.com/WNBARookie/BugTracker/bug-tracker-backend/src/types"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/src/utils"
 )
 
 func GetUserProfile(c *gin.Context) {

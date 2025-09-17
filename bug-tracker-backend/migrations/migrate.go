@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/conf"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/models"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/src/conf"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/src/models"
 )
 
 func init() {

@@ -3,8 +3,8 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/controllers"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/middlewares"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/src/controllers"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/src/middlewares"
 )
 
 func AuthRoutes(router *gin.RouterGroup) {
