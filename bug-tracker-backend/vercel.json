@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/index.go": {
-      "runtime": "go1.x"
+      "runtime": "@vercel/go@3.1.0"
     }
   },
   "rewrites": [
@@ -9,10 +9,5 @@
       "source": "/(.*)",
       "destination": "/api/index"
     }
-  ],
-  "build": {
-    "env": {
-      "GO_VERSION": "1.21"
-    }
-  }
+  ]
 }
