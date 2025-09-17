@@ -21,6 +21,13 @@ func ConnectToDatabase() {
 	db_name := os.Getenv("DB_NAME")
 	env := os.Getenv("ENVIRONMENT")
 
+	// Check if required environment variables are set
+	if db_host == "" || db_user == "" || db_password == "" || db_port == "" || db_name == "" {
+		log.Printf("Warning: Database environment variables not fully configured")
+		log.Printf("DB_HOST: %s, DB_USERNAME: %s, DB_PORT: %s, DB_NAME: %s", db_host, db_user, db_port, db_name)
+		return
+	}
+
 	ssl_mode := ""
 	if env != "local" {
 		ssl_mode = "require"
@@ -32,6 +39,10 @@ func ConnectToDatabase() {
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		log.Printf("Warning: Failed to connect to database: %v", err)
+		log.Printf("Application will continue but database operations will fail")
+		return
 	}
+
+	log.Printf("Successfully connected to database")
 }
