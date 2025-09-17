@@ -13,9 +13,9 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/conf"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/models"
-	types "github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/types"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/src/conf"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/src/models"
+	types "github.com/WNBARookie/BugTracker/bug-tracker-backend/src/types"
 )
 
 func generateRandomString() string {

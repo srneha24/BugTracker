@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/conf"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/src/conf"
 )
 
 func StandardResponseMiddleware(c *gin.Context) {

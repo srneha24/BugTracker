@@ -6,9 +6,9 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/conf"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/middlewares"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/routes"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/src/conf"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/src/middlewares"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/src/routes"
 )
 
 func init() {

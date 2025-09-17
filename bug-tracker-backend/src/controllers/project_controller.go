@@ -6,10 +6,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/conf"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/models"
-	types "github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/types"
-	"github.com/WNBARookie/BugTracker/bug-tracker-backend/internal/utils"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/src/conf"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/src/models"
+	types "github.com/WNBARookie/BugTracker/bug-tracker-backend/src/types"
+	"github.com/WNBARookie/BugTracker/bug-tracker-backend/src/utils"
 )
 
 func CreateProject(c *gin.Context) {
