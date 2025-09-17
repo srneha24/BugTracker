@@ -32,6 +32,36 @@ func init() {
 		MaxAge:           12 * time.Hour,
 	}))
 
+	// Basic health check route (no database dependency)
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"success":   true,
+			"message":   "Bug Tracker API is running",
+			"timestamp": time.Now(),
+		})
+	})
+
+	router.GET("/health", func(c *gin.Context) {
+		status := "healthy"
+		dbStatus := "not connected"
+
+		if conf.DB != nil {
+			if sqlDB, err := conf.DB.DB(); err == nil {
+				if err := sqlDB.Ping(); err == nil {
+					dbStatus = "connected"
+				}
+			}
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"success":   true,
+			"message":   "Health check",
+			"status":    status,
+			"database":  dbStatus,
+			"timestamp": time.Now(),
+		})
+	})
+
 	// Middlewares
 	router.Use(middlewares.StandardResponseMiddleware)
 	router.Use(middlewares.EnhancedContextMiddleware)
