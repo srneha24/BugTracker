@@ -41,4 +41,9 @@ By default it will take you to the home page
 
 ## Environment Variables
 
-Before running the project, create a `.env` file in the root of the frontend project using the `.env.example` as a guide:
+Before running the project, create a `.env` file in the root of the `bug-tracker-ui` directory.
+
+You can use the provided `.env.example` file as a reference:
+
+```bash
+cp .env.example .env

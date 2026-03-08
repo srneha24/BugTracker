@@ -3,12 +3,14 @@ import { FaPlus, FaTimes } from 'react-icons/fa';
 import axiosInstance from '../api/axiosInstance';
 import { toast } from 'react-toastify';
 import type { Project } from '../types/types';
+import { useNavigate } from 'react-router-dom';
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [search, setSearch] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const navigate = useNavigate();
 
   const fetchProjects = useCallback(async (searchTerm: string) => {
     try {
@@ -38,7 +40,13 @@ const ProjectsPage = () => {
   };
 
   const closeModal = () => {
-    document.getElementById('addProjectModal').open = false;
+    const modal = document.getElementById('addProjectModal') as HTMLDialogElement | null;
+    modal?.close();
+  };
+
+  const openModal = () => {
+    const modal = document.getElementById('addProjectModal') as HTMLDialogElement | null;
+    modal?.showModal();
   };
 
   const handleSubmit = async () => {
@@ -76,7 +84,7 @@ const ProjectsPage = () => {
         <div className="flex items-center gap-4">
           {' '}
           <h1 className="underline text-5xl font-bold">Projects</h1>
-          <FaPlus className="text-2xl btn btn-sm btn-circle btn-ghost" onClick={() => document.getElementById('addProjectModal').showModal()} />
+          <FaPlus className="text-2xl btn btn-sm btn-circle btn-ghost" onClick={() => openModal} />
         </div>
         <div className="">
           <input type="search" className="grow bg-light-gray px-4 py-1 rounded-lg" placeholder="Search" onChange={handleSearchBarChange} />
@@ -87,7 +95,7 @@ const ProjectsPage = () => {
       {/* TODO: refactor this to use same project list component that will be used on dashboard */}
       <div className="grid grid-cols-3 gap-10">
         {projects.map((project) => (
-          <div key={project.id} className="bg-light-gray text-center p-20 hover:bg-gray-400">
+          <div key={project.id} className="bg-light-gray text-center p-20 hover:bg-gray-400" onClick={() => navigate(`/projects/${project.id}`)}>
             <h1 className="text-2xl font-bold">{project.title}</h1>
           </div>
         ))}
@@ -96,7 +104,7 @@ const ProjectsPage = () => {
       {/* Add Project Dialog */}
       <dialog id="addProjectModal" className="modal">
         <div className="modal-box bg-white">
-          <FaTimes className="text-large btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={() => closeModal()} />
+          <FaTimes className=" btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={() => closeModal} />
 
           <h2 className="font-bold text-3xl text-center mt-4 mb-8">Add Project</h2>
           <div className="form-group">
@@ -114,7 +122,7 @@ const ProjectsPage = () => {
             <button onClick={() => handleSubmit()} className="button-base button-primary">
               Add
             </button>
-            <button className="button-base button-secondary" onClick={() => closeModal()}>
+            <button className="button-base button-secondary" onClick={() => closeModal}>
               Cancel
             </button>
           </div>
